@@ -49,9 +49,17 @@ spam_words_length = content_length(spam_count_words['word'])
 ham_avg_words_length = avg_content_length(ham_words_length, ham_count_words)
 spam_avg_words_length = avg_content_length(spam_words_length, spam_count_words)
 ham_words_length = ham_words_length.to_frame().reset_index()
-ham_words_length.drop('index', inplace=True, axis=1)
+# ham_words_length.drop('index', inplace=True, axis=1)
+ham_word_normalize = pd.Series(ham_words_length['word']).max()
+ham_words_length.loc[:, 'word'] /= ham_word_normalize
+ham_words_length = ham_words_length.sort_values(by=['word']).reset_index()
+ham_avg_words_length /= ham_word_normalize
 spam_words_length = spam_words_length.to_frame().reset_index()
-spam_words_length.drop('index', inplace=True, axis=1)
+# spam_words_length.drop('index', inplace=True, axis=1)
+spam_word_normalize = pd.Series(spam_words_length['word']).max()
+spam_words_length.loc[:, 'word'] /= spam_word_normalize
+spam_avg_words_length /= spam_word_normalize
+spam_words_length = spam_words_length.sort_values(by=['word']).reset_index()
 ham_20_words = get_20_and_normalize(ham_count_words)
 spam_20_words = get_20_and_normalize(spam_count_words)
 
@@ -64,9 +72,15 @@ spam_message_length = content_length(spam['v2'])
 spam_avg_message_length = avg_content_length(spam_message_length, spam)
 ham_avg_message_length = avg_content_length(ham_message_length, ham)
 spam_message_length = spam_message_length.to_frame().reset_index()
-spam_message_length.drop('index', inplace=True, axis=1)
+# spam_message_length.drop('index', inplace=True, axis=1)
+spam_message_normalize = pd.Series(spam_message_length['v2']).max()
+spam_message_length.loc[:, 'v2'] /= spam_message_normalize
+spam_avg_message_length /= spam_message_normalize
 ham_message_length = ham_message_length.to_frame().reset_index()
-ham_message_length.drop('index', inplace=True, axis=1)
+# ham_message_length.drop('index', inplace=True, axis=1)
+ham_message_normalize = pd.Series(ham_message_length['v2']).max()
+ham_message_length.loc[:, 'v2'] /= ham_message_normalize
+ham_avg_message_length /= ham_message_normalize
 
 fig1, (ax1, ax2) = plt.subplots(1, 2)
 ax1.set_title("ham")
@@ -80,11 +94,11 @@ fig1.savefig(OUTPUT_FOLDER + "/20words.png")
 fig2, (ax1, ax2) = plt.subplots(1, 2)
 ax1.set_title("ham")
 ax2.set_title("spam")
-ax1.plot(ham_words_length['word'])
-ax1.axhline(ham_avg_words_length, color="r")
+ax1.plot(ham_words_length['word'], ham_words_length['level_0'])
+ax1.axvline(ham_avg_words_length, color="r")
 ax1.legend(["length", "average"])
-ax2.plot(spam_words_length['word'])
-ax2.axhline(spam_avg_words_length, color="r")
+ax2.plot(spam_words_length['word'], spam_words_length['level_0'])
+ax2.axvline(spam_avg_words_length, color="r")
 ax2.legend(["length", "average"])
 fig2.show()
 fig2.savefig(OUTPUT_FOLDER + "/wordsLength.png")
