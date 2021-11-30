@@ -1,10 +1,13 @@
 from pathlib import Path
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 import matplotlib
 import pandas as pd
 from matplotlib import pyplot as plt
-matplotlib.rc('figure', figsize=(10, 5))
 
-FILE_PATH = "sms-spam-corpus.csv"
+matplotlib.rc('figure', figsize=(10, 5))
+Tk().withdraw()
+FILE_PATH = askopenfilename()
 REPLACE_DICTIONARY = {r'[^A-Za-z ]+': ''}
 SPACES_DICTIONARY = {r'\s\s+': ' ', r'(?=^|\n)\s': ''}
 STEM_REGULAR_EXPRESSION = {r'ion|s|ive|ed|ing(?= |\n|$)'}
